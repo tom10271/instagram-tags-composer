@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~primeicons/primeicons.css";
+@import "~primevue/resources/themes/saga-blue/theme.css";
+@import "~primevue/resources/primevue.min.css";
+
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#module-menu {
+    width: 200px;
+}
+
+#application-menu {
+    a {
+        &.router-link-active, &:hover {
+            @apply border-b-2 border-red-400;
+            margin-bottom: -2px;
+        }
+    }
+}
+
+//nav#top-nav {
+//    //@apply
+//}
+//
+//section#content-container {
+//    @apply col-span-9;
+//}
