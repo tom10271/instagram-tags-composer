@@ -7,6 +7,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
 const HTMLPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const resolveClientEnv = require('../utils/resolveClientEnv')
 const paths = require('../utils/paths')
@@ -52,6 +53,7 @@ module.exports = {
         new HTMLPlugin({
             template: paths.resolve('public/index.html'),
         }),
+        new MiniCssExtractPlugin(),
         new CopyPlugin({
             patterns: [
                 {

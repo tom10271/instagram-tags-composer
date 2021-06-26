@@ -3,62 +3,66 @@ import { reactive } from 'vue';
 export class TagGroupRegistry {
     key = 'ig-tags-json';
 
-    registry: {
-        [key: string]: TagGroup;
-    } = {};
+    registry: TagGroup[] = [];
+
+    getGroupByName(name: string): TagGroup {
+        return this.registry.filter((each) => each.name === name)[0];
+    }
 
     addGroup(name: string) {
-        this.registry[name] = new TagGroup(name);
+        this.registry.push(new TagGroup(name));
     }
 
     restore() {
+        this.registry = [];
+
         JSON.parse(localStorage.getItem(this.key) || '[]').forEach((each) => {
-            this.registry[each.name] = new TagGroup(each.name, each.tags, each.inheritGroupNames);
+            this.registry.push(
+                new TagGroup(each.name, each.tags, each.inheritGroupNames, each.enabled)
+            );
         });
     }
 
     save() {
-        localStorage.setItem(
-            this.key,
-            JSON.stringify(
-                Object.values(this.registry).map((each) => ({
+        const json = JSON.stringify(
+            this.registry
+                .filter((each) => each.name + each.tags + each.inheritGroupNames)
+                .map((each) => ({
                     name: each.name,
                     tags: each.tags,
                     inheritGroupNames: each.inheritGroupNames,
+                    enabled: each.enabled,
                 }))
-            )
         );
+
+        localStorage.setItem(this.key, json);
     }
 
     resolveResults() {
-        const result = {};
+        const result = new Set();
 
-        []
-            .concat(
-                ...Object.values(this.registry)
-                    .filter((each) => each.enabled)
-                    .map((each) => each.getTags())
-            )
-            .forEach((each) => (result[each] = true));
+        this.registry
+            .filter((each) => each.enabled)
+            .forEach((each) => each.getTags().forEach((tag) => result.add(tag)));
 
-        return Object.keys(result);
+        return Array.from(result.values());
     }
 }
 
 export class TagGroup {
-    enabled: boolean = false;
     public tagsInText: string;
 
     constructor(
         public name: string,
         public tags: string[] = [],
-        public inheritGroupNames: string[] = []
+        public inheritGroupNames: string[] = [],
+        public enabled: boolean = false
     ) {
         this.tagsInText = this.tags.join(', ');
     }
 
     updateTagsByTexts() {
-        this.tags = this.tagsInText.split(',').map((each) => each.trim());
+        this.tags = this.tagsInText.split(', ').map((each) => each.trim());
     }
 
     addGroupName(name: string) {
@@ -67,12 +71,12 @@ export class TagGroup {
 
     getTags(): string[] {
         return this.tags.concat(
-            ...this.inheritGroupNames.map((each) => groupRegistry.registry[each].getTags())
+            ...this.inheritGroupNames.map((each) => groupRegistry.getGroupByName(each).getTags())
         );
     }
 
     toggleInheritGroup(groupName: string) {
-        if (groupRegistry.registry[groupName].inheritGroupNames.indexOf(this.name) > -1) {
+        if (groupRegistry.getGroupByName(groupName).inheritGroupNames.indexOf(this.name) > -1) {
             // To prevent stackoverflow and circular dependency
 
             return;
