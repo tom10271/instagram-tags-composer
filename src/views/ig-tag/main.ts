@@ -19,6 +19,11 @@ export default class MainComponent extends Vue {
         this.groupRegistry.restoreFromLocalStorage();
     }
 
+    onRowReorder(event, group) {
+        group.tags = event.value;
+        group.tags.forEach((each, i) => (each.score = i));
+    }
+
     unmounted() {
         this.groupRegistry.save();
     }

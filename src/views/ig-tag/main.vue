@@ -1,22 +1,29 @@
 <template>
     <div class="grid grid-flow-col grid-cols-12 gap-4">
-        <div class="p-md lg:col-span-2">
+        <div class="p-md xs:col-span-12 md:col-span-3 lg:col-span-2">
             <section>
-                <p
-                    v-for="each in groupRegistry
-                        .resolveResults()
-                        .filter((each) => !!each)
-                        .map((each) => '#' + each)"
-                    :key="each"
-                >
-                    {{ each }}
-                </p>
+                <h3 class="mb-4">
+                    Count: {{ groupRegistry.resolveResults().filter((each) => !!each).length }}
+                </h3>
+
+                <section class="resolved-tags-container overflow-auto">
+                    <p
+                        class="mb-2"
+                        v-for="each in groupRegistry
+                            .resolveResults()
+                            .filter((each) => !!each)
+                            .map((each) => '#' + each.name)"
+                        :key="each"
+                    >
+                        {{ each }}
+                    </p>
+                </section>
             </section>
         </div>
 
-        <div class="p-md lg:col-span-10">
+        <div class="p-md xs:col-span-12 md:col-span-9 lg:col-span-10">
             <section class="select-none">
-                <nav class="flex">
+                <nav class="flex mb-md">
                     <h1 class="flex-grow">Groups</h1>
 
                     <button
@@ -52,7 +59,10 @@
                     </button>
                 </section>
 
-                <section class="grid grid-cols-4 gap-2" v-else>
+                <section
+                    class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 overflow-auto tag-groups-container"
+                    v-else
+                >
                     <div
                         class="border border-gray-200 p-sm"
                         v-for="group in groupRegistry.registry"
@@ -70,12 +80,27 @@
                             </button>
                         </header>
 
-                        <textarea
-                            class="w-full"
-                            v-model="group.tagsInText"
-                            @change="group.updateTagsByTexts()"
+                        <!--                        <textarea-->
+                        <!--                            class="w-full"-->
+                        <!--                            rows="3"-->
+                        <!--                            v-model="group.tagsInText"-->
+                        <!--                            @change="group.updateTagsByTexts()"-->
+                        <!--                        >-->
+                        <!--                        </textarea>-->
+
+                        <DataTable
+                            :value="group.tags"
+                            :reorderableColumns="true"
+                            @rowReorder="onRowReorder($event, group)"
+                            responsiveLayout="scroll"
                         >
-                        </textarea>
+                            <Column
+                                :rowReorder="true"
+                                headerStyle="width: 3rem"
+                                :reorderableColumn="false"
+                            />
+                            <Column :field="'name'" :header="'Name'" :key="'name'"></Column>
+                        </DataTable>
 
                         <div class="inline-block">
                             <template
@@ -99,11 +124,12 @@
 
                         <hr class="my-xs" />
 
-                        <pre class="p-xs">{{
+                        <pre class="p-xs whitespace-pre-line">{{
                             group
                                 .getTags()
                                 .filter((each) => !!each)
-                                .map((each) => '#' + each)
+                                .sort((a, b) => (a.score &lt; b.score ? -1 : 1))
+                                .map((each) => '#' + each.name)
                                 .join(' ')
                         }}</pre>
                     </div>

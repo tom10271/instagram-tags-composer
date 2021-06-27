@@ -24,10 +24,10 @@
     }
 }
 
-//nav#top-nav {
-//    //@apply
-//}
-//
-//section#content-container {
-//    @apply col-span-9;
-//}
+.resolved-tags-container {
+    height: calc(100vh - 120px);
+}
+
+.tag-groups-container {
+    height: calc(100vh - 130px);
+}

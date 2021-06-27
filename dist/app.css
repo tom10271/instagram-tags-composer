@@ -26334,6 +26334,12 @@ to{
 #application-menu a.router-link-active,#application-menu a:hover{
   margin-bottom:-2px;
 }
+.resolved-tags-container{
+  height:calc(100vh - 120px)
+}
+.tag-groups-container{
+  height:calc(100vh - 130px)
+}
 @media (min-width: 640px){
 .sm\:container{
     width: 100%;

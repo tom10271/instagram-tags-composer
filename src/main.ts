@@ -8,6 +8,8 @@ import PrimeVue from 'primevue/config';
 import Sidebar from 'primevue/sidebar';
 import PanelMenu from 'primevue/panelmenu';
 import TabMenu from 'primevue/tabmenu';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 createApp(App)
     .use(router)
@@ -15,5 +17,7 @@ createApp(App)
     .component('Sidebar', Sidebar)
     .component('PanelMenu', PanelMenu)
     .component('TabMenu', TabMenu)
+    .component('DataTable', DataTable)
+    .component('Column', Column)
     .use(PrimeVue)
     .mount('#app');

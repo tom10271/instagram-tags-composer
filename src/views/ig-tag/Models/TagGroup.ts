@@ -1,25 +1,21 @@
-export class TagGroup {
-    public tagsInText: string;
+export class Tag {
+    constructor(public name: string, public score: number = 0) {}
+}
 
+export class TagGroup {
     constructor(
         public groupRegistry,
         public name: string,
-        public tags: string[] = [],
+        public tags: Tag[] = [],
         public inheritGroupNames: string[] = [],
         public enabled: boolean = false
-    ) {
-        this.tagsInText = this.tags.join(', ');
-    }
-
-    updateTagsByTexts() {
-        this.tags = this.tagsInText.split(', ').map((each) => each.trim());
-    }
+    ) {}
 
     addGroupName(name: string) {
         this.inheritGroupNames.splice(this.inheritGroupNames.indexOf(name), 1);
     }
 
-    getTags(): string[] {
+    getTags(): Tag[] {
         return this.tags.concat(
             ...this.inheritGroupNames.map((each) =>
                 this.groupRegistry.getGroupByName(each).getTags()
