@@ -1,18 +1,22 @@
 import { Options, Vue } from 'vue-class-component';
-import { groupRegistry } from '@/views/ig-tag/Models/TagGroup';
+import { groupRegistry } from './Models/TagGroupRegistry';
 
-@Options({})
+@Options({
+    watch: {
+        showHJsonTextEditor() {
+            this.jsonToRestore = this.groupRegistry.convertTagGroupsToJSON();
+        },
+    },
+})
 export default class MainComponent extends Vue {
     results: string[] = [];
+    jsonToRestore: string = '';
+    showHJsonTextEditor: boolean = false;
 
     groupRegistry = groupRegistry;
 
     mounted() {
         this.groupRegistry.restoreFromLocalStorage();
-    }
-
-    restoreFromJSON() {
-        this.groupRegistry.restoreFromJSON();
     }
 
     unmounted() {

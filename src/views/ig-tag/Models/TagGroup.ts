@@ -1,64 +1,8 @@
-import { reactive } from 'vue';
-
-export class TagGroupRegistry {
-    key = 'ig-tags-json';
-
-    registry: TagGroup[] = [];
-
-    getGroupByName(name: string): TagGroup {
-        return this.registry.filter((each) => each.name === name)[0];
-    }
-
-    addGroup(name: string) {
-        this.registry.push(new TagGroup(name));
-    }
-
-    restoreFromLocalStorage() {
-        this.restoreFromJSON(
-            localStorage.getItem(this.key) || '[]'
-        );
-    }
-
-    restoreFromJSON(json: string) {
-        this.registry = [];
-
-        JSON.parse(json).forEach((each) => {
-            this.registry.push(
-                new TagGroup(each.name, each.tags, each.inheritGroupNames, each.enabled)
-            );
-        });
-    }
-
-    save() {
-        const json = JSON.stringify(
-            this.registry
-                .filter((each) => each.name + each.tags + each.inheritGroupNames)
-                .map((each) => ({
-                    name: each.name,
-                    tags: each.tags,
-                    inheritGroupNames: each.inheritGroupNames,
-                    enabled: each.enabled,
-                }))
-        );
-
-        localStorage.setItem(this.key, json);
-    }
-
-    resolveResults() {
-        const result = new Set();
-
-        this.registry
-            .filter((each) => each.enabled)
-            .forEach((each) => each.getTags().forEach((tag) => result.add(tag)));
-
-        return Array.from(result.values());
-    }
-}
-
 export class TagGroup {
     public tagsInText: string;
 
     constructor(
+        public groupRegistry,
         public name: string,
         public tags: string[] = [],
         public inheritGroupNames: string[] = [],
@@ -77,12 +21,16 @@ export class TagGroup {
 
     getTags(): string[] {
         return this.tags.concat(
-            ...this.inheritGroupNames.map((each) => groupRegistry.getGroupByName(each).getTags())
+            ...this.inheritGroupNames.map((each) =>
+                this.groupRegistry.getGroupByName(each).getTags()
+            )
         );
     }
 
     toggleInheritGroup(groupName: string) {
-        if (groupRegistry.getGroupByName(groupName).inheritGroupNames.indexOf(this.name) > -1) {
+        if (
+            this.groupRegistry.getGroupByName(groupName).inheritGroupNames.indexOf(this.name) > -1
+        ) {
             // To prevent stackoverflow and circular dependency
 
             return;
@@ -97,5 +45,3 @@ export class TagGroup {
         }
     }
 }
-
-export const groupRegistry = reactive(new TagGroupRegistry());

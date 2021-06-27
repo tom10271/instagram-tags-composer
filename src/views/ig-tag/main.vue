@@ -21,6 +21,13 @@
 
                     <button
                         class="bg-gray-200 rounded py-xs px-sm"
+                        @click="showHJsonTextEditor = !showHJsonTextEditor"
+                    >
+                        {{ showHJsonTextEditor ? 'Hide' : 'Show' }}&nbsp;JSON
+                    </button>
+
+                    <button
+                        class="bg-gray-200 rounded py-xs px-sm"
                         @click="groupRegistry.addGroup('')"
                     >
                         Add
@@ -34,7 +41,18 @@
                     </button>
                 </nav>
 
-                <section class="grid grid-cols-4 gap-2">
+                <section class="ig-tag-json-edit w-full" v-if="showHJsonTextEditor">
+                    <textarea class="block w-3/4" rows="20" v-model="jsonToRestore" />
+
+                    <button
+                        class="mt-md bg-gray-200 rounded py-xs px-sm"
+                        @click="groupRegistry.restoreFromJSON(jsonToRestore)"
+                    >
+                        Update by JSON
+                    </button>
+                </section>
+
+                <section class="grid grid-cols-4 gap-2" v-else>
                     <div
                         class="border border-gray-200 p-sm"
                         v-for="group in groupRegistry.registry"
