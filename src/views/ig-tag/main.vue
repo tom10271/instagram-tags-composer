@@ -20,14 +20,14 @@
                     <h1 class="flex-grow">Groups</h1>
 
                     <button
-                        class="bg-gray-200 rounded py-xs px-sm"
+                        class="ml-md bg-gray-200 rounded py-xs px-sm"
                         @click="showHJsonTextEditor = !showHJsonTextEditor"
                     >
                         {{ showHJsonTextEditor ? 'Hide' : 'Show' }}&nbsp;JSON
                     </button>
 
                     <button
-                        class="bg-gray-200 rounded py-xs px-sm"
+                        class="ml-md bg-gray-200 rounded py-xs px-sm"
                         @click="groupRegistry.addGroup('')"
                     >
                         Add
