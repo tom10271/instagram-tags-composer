@@ -13,10 +13,16 @@ export class TagGroupRegistry {
         this.registry.push(new TagGroup(name));
     }
 
-    restore() {
+    restoreFromLocalStorage() {
+        this.restoreFromJSON(
+            localStorage.getItem(this.key) || '[]'
+        );
+    }
+
+    restoreFromJSON(json: string) {
         this.registry = [];
 
-        JSON.parse(localStorage.getItem(this.key) || '[]').forEach((each) => {
+        JSON.parse(json).forEach((each) => {
             this.registry.push(
                 new TagGroup(each.name, each.tags, each.inheritGroupNames, each.enabled)
             );
